@@ -1,0 +1,14 @@
+results/
+resources/
+data/
+.snakemake/
+*.rds
+*.RData
+.Rhistory
+.Rproj.user/
+config/local.yaml
+validation/local/
+__pycache__/
+*.pyc
+*.log
+.ipynb_checkpoints/

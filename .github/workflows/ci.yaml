@@ -1,0 +1,31 @@
+name: Workflow checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install snakemake==9.16.3
+      - run: python -m unittest discover -s tests -v
+      - name: Check DAG construction without downloading data
+        run: |
+          mkdir -p /tmp/projection-fixture
+          touch /tmp/projection-fixture/query.raw.seurat.rds
+          touch /tmp/projection-fixture/BoneMarrowMap_SymphonyReference.rds
+          touch /tmp/projection-fixture/BoneMarrowMap_uwot_model.uwot
+          snakemake --cores 1 --dry-run --config \
+            'input_paths=["/tmp/projection-fixture/query.raw.seurat.rds"]' \
+            reference_cache_dir=/tmp/projection-fixture
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.3'
+      - name: Parse all R modules
+        run: Rscript --vanilla -e 'for (f in list.files("workflow/scripts", pattern="[.]R$", full.names=TRUE)) parse(f)'

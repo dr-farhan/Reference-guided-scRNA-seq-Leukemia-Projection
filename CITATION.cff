@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "Please cite this workflow and the BoneMarrowMap publication when using this analysis."
+title: "Reference-guided scRNA-seq Leukemia Projection"
+type: software
+authors:
+  - name: dr-farhan
+repository-code: "https://github.com/dr-farhan/Reference-guided-scRNA-seq-Leukemia-Projection"
+license: MIT
+version: 1.0.0

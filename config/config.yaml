@@ -1,0 +1,27 @@
+# Paths are relative to the directory in which you run Snakemake.
+input_paths:
+  - data/query.raw.seurat.rds
+input_pattern: 'raw\.seurat\.rds$'
+search_input_recursively: true
+output_dir: results
+reference_cache_dir: resources/reference
+rscript: Rscript
+threads: 4
+mem_mb: 96000
+analysis:
+  source_rna_assay: RNA
+  sample_meta_column: sample_id
+  apply_input_qc: false
+  min_features: 200
+  max_features: .inf
+  max_percent_mt: 25
+  mapping_mad_threshold: 2.5
+  knn_probability_cutoff: 0.50
+  knn_k: 30
+  native_npcs: 30
+  native_resolution: 0.6
+  native_umap_min_dist: 0.30
+  reference_plot_max_cells: 60000
+  density_point_max_cells: 50000
+  point_size: 0.25
+  seed: 20260818

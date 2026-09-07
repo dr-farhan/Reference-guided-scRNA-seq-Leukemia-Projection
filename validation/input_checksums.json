@@ -1,0 +1,17 @@
+[
+  {
+    "file": "GSE145410.solote.RNA_combined_model.combined.raw.seurat.rds",
+    "bytes": 853936730,
+    "sha256": "6a6359f16de602c0a41256e2c16ced576335bbec5a770dff7b36cdd8aa590606"
+  },
+  {
+    "file": "BoneMarrowMap_SymphonyReference.rds",
+    "bytes": 361774653,
+    "sha256": "6410056e2d9cdf4e755247d7072f5896ea852bc2fe3c3a8b2ec71f58c7ad781b"
+  },
+  {
+    "file": "BoneMarrowMap_uwot_model.uwot",
+    "bytes": 232036864,
+    "sha256": "b97ffa9f6e1ca1a331d19036594008ee1d3364fe2becac28732f8ba4b46ab124"
+  }
+]

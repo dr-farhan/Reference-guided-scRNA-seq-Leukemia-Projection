@@ -1,0 +1,37 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+additionalProperties: false
+required: [input_paths, input_pattern, search_input_recursively, output_dir, reference_cache_dir, rscript, threads, mem_mb, analysis]
+properties:
+  input_paths:
+    type: array
+    minItems: 1
+    items: {type: string, minLength: 1}
+  input_pattern: {type: string}
+  search_input_recursively: {type: boolean}
+  output_dir: {type: string, minLength: 1}
+  reference_cache_dir: {type: string, minLength: 1}
+  rscript: {type: string, minLength: 1}
+  threads: {type: integer, minimum: 1}
+  mem_mb: {type: integer, minimum: 1024}
+  analysis:
+    type: object
+    additionalProperties: false
+    required: [source_rna_assay, sample_meta_column, apply_input_qc, min_features, max_features, max_percent_mt, mapping_mad_threshold, knn_probability_cutoff, knn_k, native_npcs, native_resolution, native_umap_min_dist, reference_plot_max_cells, density_point_max_cells, point_size, seed]
+    properties:
+      source_rna_assay: {type: string}
+      sample_meta_column: {type: [string, 'null']}
+      apply_input_qc: {type: boolean}
+      min_features: {type: integer, minimum: 0}
+      max_features: {type: number, minimum: 1}
+      max_percent_mt: {type: number, minimum: 0, maximum: 100}
+      mapping_mad_threshold: {type: number, exclusiveMinimum: 0}
+      knn_probability_cutoff: {type: number, minimum: 0, maximum: 1}
+      knn_k: {type: integer, minimum: 1}
+      native_npcs: {type: integer, minimum: 2}
+      native_resolution: {type: number, exclusiveMinimum: 0}
+      native_umap_min_dist: {type: number, minimum: 0, maximum: 1}
+      reference_plot_max_cells: {type: integer, minimum: 1}
+      density_point_max_cells: {type: integer, minimum: 1}
+      point_size: {type: number, exclusiveMinimum: 0}
+      seed: {type: integer, minimum: 0}

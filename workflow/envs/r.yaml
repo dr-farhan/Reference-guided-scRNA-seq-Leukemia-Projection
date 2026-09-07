@@ -1,0 +1,24 @@
+name: leukemia-projection-r
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - r-base=4.4.3
+  - r-renv
+  - c-compiler
+  - cxx-compiler
+  - fortran-compiler
+  - make
+  - cmake
+  - pkg-config
+  - libcurl
+  - openssl
+  - libxml2
+  - cairo
+  - fontconfig
+  - harfbuzz
+  - fribidi
+  - libpng
+  - libtiff
+  - glpk
+  - git
