@@ -1,8 +1,8 @@
 # Reference-guided scRNA-seq Leukemia Projection
 
-A modular **Snakemake workflow** for projecting leukemia single-cell RNA-seq data onto the healthy **BoneMarrowMap** reference. Starting from raw-count Seurat objects, it produces reference annotations, mapping QC, hematopoietic pseudotime, native clusters, and publication figures in PDF and 400-dpi PNG formats.
+A modular **Snakemake workflow** for projecting leukemia single-cell RNA-seq data onto the healthy **BoneMarrowMap** reference. Starting from raw-count Seurat objects, it produces reference annotations, mapping QC, hematopoietic pseudotime, and native clusters.
 
-This workflow refactors the supplied `aml_bonemarrowmap_pipeline_V2.R` analysis into twelve focused R sections. It retains the reference-mapping and lineage analysis while removing **all LSC/BLAST scoring, classification, enrichment, highlights, and related pseudobulk analyses**. Final annotations describe transferred major lineages; they do not establish whether a cell is malignant.
+This workflow perform the reference-mapping and lineage analysis and do reference guided lineage annotation. Final annotations describe transferred major lineages.
 
 ```mermaid
 flowchart LR
@@ -73,13 +73,11 @@ results/
 └── sessionInfo.txt
 ```
 
-Figure numbering follows V2 so results can be compared directly. Figures 9 and 10 are deliberately absent. Figure 5 contains only pseudotime. Figures 3, 7, 8, 11, 12, and per-sample annotation panels use lineage-only annotations. See the complete [analysis and figure crosswalk](docs/analysis_crosswalk.md).
-
 ## Workflow organization
 
-The Snakefile exposes separate preparation, projection, native-analysis, and reporting rules. Each analysis process reloads its explicit state and saved random-number state. Twelve numbered scripts in `workflow/scripts/` separate the scientific sections; `bootstrap.R`, `utils.R`, and `run_stage.R` provide configuration, helpers, and stage dispatch.
+The Snakefile exposes separate preparation, projection, native-analysis, and reporting rules. Each analysis process reloads its explicit state and saved random-number state.
 
-R uses readable assignments, `%>%` pipelines, named function arguments, and ggplot2 layers, informed by the teaching-oriented code in [Ming Tang's scclusteval](https://github.com/crazyhottommy/scclusteval) and [Snakemake workflow examples](https://github.com/crazyhottommy/pyflow-ChIPseq). The retained scientific implementation derives from the supplied V2 scripts; this project is not affiliated with those repositories.
+R uses readable assignments, `%>%` pipelines, named function arguments, and ggplot2 layers.
 
 ## Running on LSF
 
@@ -89,7 +87,7 @@ Activate the workflow environment, edit `config/config.yaml` for your input data
 bsub < profiles/lsf/submit.lsf.sh
 ```
 
-The launcher runs Snakemake within one four-core LSF allocation, following the original V2 resource request. Queue names and memory-limit semantics are site-specific; adapt the directives to your cluster. Local runs can use `snakemake --profile profiles/local`.
+The launcher runs Snakemake within one four-core LSF allocation. Queue names and memory-limit semantics are site-specific; adapt the directives to your cluster. Local runs can use `snakemake --profile profiles/local`.
 
 ## Development checks
 
