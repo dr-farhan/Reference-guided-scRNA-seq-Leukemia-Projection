@@ -7,8 +7,16 @@ data/
 .Rhistory
 .Rproj.user/
 config/local.yaml
-validation/local/
+/validation/
 __pycache__/
 *.pyc
 *.log
 .ipynb_checkpoints/
+
+# Local analysis examples and comparison artifacts are not published.
+/config/gse145410.yaml
+/docs/assets/
+/tests/compare_figures.py
+/tests/compare_objects.R
+/tests/compare_v2.R
+/workflow/scripts/validate_outputs.py

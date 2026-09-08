@@ -1,4 +1,4 @@
-# Alternate dataset example; full integration validation used GSE145410 only.
+# Alternate dataset configuration; adapt the paths to your local files.
 input_paths:
   - ../GSE223844_decitabine_BoneMarrowMap/data/GSE223844_screening_EOLN.raw.seurat.rds
 output_dir: results/GSE223844

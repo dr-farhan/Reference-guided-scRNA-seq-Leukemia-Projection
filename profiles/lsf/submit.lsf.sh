@@ -9,4 +9,4 @@
 #BSUB -e lsf_projection.%J.err
 set -euo pipefail
 # Submit from the repository root after activating your workflow environment.
-snakemake --profile profiles/local --configfile config/gse145410.yaml config/local.yaml
+snakemake --profile profiles/local --configfile config/config.yaml config/local.yaml

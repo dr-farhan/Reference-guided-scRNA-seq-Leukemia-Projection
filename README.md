@@ -12,7 +12,6 @@ flowchart LR
     C --> D[Mapping QC, cell types and pseudotime]
     D --> E[Native PCA, UMAP and clusters]
     E --> F[Lineage figures and tables]
-    F --> G[Output validation]
 ```
 
 ## Quick start
@@ -31,22 +30,15 @@ snakemake --cores 4 --configfile config/my_dataset.yaml --rerun-incomplete
 
 The first run downloads the reference RDS and UMAP model into `resources/reference/`. Reference files and single-cell data are not bundled in Git. An existing reference cache can be selected with `reference_cache_dir`.
 
-### Reproduce GSE145410
+### Use an existing R environment
 
-The example expects the original dataset directory beside this repository. It uses the **same input RDS and cached reference assets** as the supplied V2 launcher.
-
-```bash
-snakemake --cores 4 --configfile config/gse145410.yaml --dry-run
-snakemake --cores 4 --configfile config/gse145410.yaml --rerun-incomplete
-```
-
-To use an existing R installation, create an untracked `config/local.yaml`:
+Create an untracked `config/local.yaml`:
 
 ```yaml
 rscript: /absolute/path/to/Rscript
 ```
 
-Append it to either command: `--configfile config/gse145410.yaml config/local.yaml`. This is how the local validation uses the original V2 R environment. The full run passed on 19,471 cells from four samples, producing 13 native clusters and 23 PDF/PNG figure pairs. All 36 retained per-cell columns matched V2 exactly, and all 11 unchanged PNGs were byte-identical. See the [validation report](validation/README.md).
+Append it to the run command: `--configfile config/my_dataset.yaml config/local.yaml`.
 
 ## Inputs and parameters
 
@@ -69,7 +61,7 @@ Native analysis uses SCTransform with mitochondrial-percentage regression and th
 ## Results
 
 ```text
-results/GSE145410/
+results/
 ├── figures/                  # Paired PDF and PNG figures
 ├── tables/                   # Input QC, per-cell and cluster annotations
 ├── objects/                  # Annotated Seurat RDS
@@ -77,60 +69,48 @@ results/GSE145410/
 ├── logs/                     # One log per Snakemake rule
 ├── benchmarks/               # Runtime and resource measurements
 ├── provenance/               # Resolved config and figure checksums
-├── validation/               # Machine-readable output checks
 ├── METHODS_AND_INTERPRETATION.txt
 └── sessionInfo.txt
 ```
 
 Figure numbering follows V2 so results can be compared directly. Figures 9 and 10 are deliberately absent. Figure 5 contains only pseudotime. Figures 3, 7, 8, 11, 12, and per-sample annotation panels use lineage-only annotations. See the complete [analysis and figure crosswalk](docs/analysis_crosswalk.md).
 
-## GSE145410 example figures
-
-![Reference projection with lineage annotations](docs/assets/03_projected_final_annotations.png)
-
-![Native clusters and transferred lineages](docs/assets/07_native_UMAPs_combined_AZA_control.png)
-
-![Lineage composition within native clusters](docs/assets/13_cluster_by_reference_lineage_heatmap.png)
-
 ## Workflow organization
 
-The Snakefile exposes separate preparation, projection, native-analysis, reporting, and validation rules. Each analysis process reloads its explicit state and saved random-number state. Twelve numbered scripts in `workflow/scripts/` separate the scientific sections; `bootstrap.R`, `utils.R`, and `run_stage.R` provide configuration, helpers, and stage dispatch.
+The Snakefile exposes separate preparation, projection, native-analysis, and reporting rules. Each analysis process reloads its explicit state and saved random-number state. Twelve numbered scripts in `workflow/scripts/` separate the scientific sections; `bootstrap.R`, `utils.R`, and `run_stage.R` provide configuration, helpers, and stage dispatch.
 
 R uses readable assignments, `%>%` pipelines, named function arguments, and ggplot2 layers, informed by the teaching-oriented code in [Ming Tang's scclusteval](https://github.com/crazyhottommy/scclusteval) and [Snakemake workflow examples](https://github.com/crazyhottommy/pyflow-ChIPseq). The retained scientific implementation derives from the supplied V2 scripts; this project is not affiliated with those repositories.
 
 ## Running on LSF
 
-Activate the workflow environment, create `config/local.yaml`, and submit from the repository root:
+Activate the workflow environment, edit `config/config.yaml` for your input data, create `config/local.yaml`, and submit from the repository root:
 
 ```bash
 bsub < profiles/lsf/submit.lsf.sh
 ```
 
-The launcher runs Snakemake within one four-core LSF allocation, following the original V2 resource request. Queue names and memory-limit semantics are site-specific; adapt the directives to your cluster. Local runs can use `snakemake --profile profiles/local`. The GSE145410 validation was run in an existing compute allocation with `--cores 1`.
+The launcher runs Snakemake within one four-core LSF allocation, following the original V2 resource request. Queue names and memory-limit semantics are site-specific; adapt the directives to your cluster. Local runs can use `snakemake --profile profiles/local`.
 
-## Validation and maintenance
+## Development checks
 
 ```bash
 python -m unittest discover -s tests -v
 Rscript --vanilla -e 'for (f in list.files("workflow/scripts", pattern="[.]R$", full.names=TRUE)) parse(f)'
-
-# Compare with an existing V2 analysis; does not rerun excluded analyses.
-Rscript --vanilla tests/compare_v2.R \
-  ../single_cell_dataset_GSE145410/Revised_V2 \
-  results/GSE145410 validation/local
-
-# Recheck figure integrity even when Snakemake has nothing to rerun.
-python workflow/scripts/validate_outputs.py \
-  results/GSE145410 results/GSE145410/validation/output_checks.json
 ```
 
-The validator checks cell identity, cell-count conservation, paired figure formats, file signatures and checksums, and absence of excluded output annotations. Snakemake tracks the figure directory as a single output; use the integrity command above to detect deletion or modification of an individual image inside an otherwise existing directory.
+GitHub Actions checks the configuration, workflow structure, and R syntax. Snakemake tracks the figure directory as a single output, and `provenance/figure_manifest.csv` records the generated figure checksums.
+
+## Contributors
+
+- **Farhan Ahmad ([dr-farhan](https://github.com/dr-farhan))** — project maintainer and original analysis.
+- **Codex (OpenAI)** — AI coding assistant contributing workflow refactoring, documentation, and repository maintenance.
+
+See [CONTRIBUTORS.md](CONTRIBUTORS.md) for contribution credits.
 
 ## References
 
 - Zeng AGX et al. *Blood Cancer Discovery* (2025), 6:307–324. [DOI: 10.1158/2643-3230.BCD-24-0342](https://doi.org/10.1158/2643-3230.BCD-24-0342).
 - [BoneMarrowMap software and reference documentation](https://github.com/andygxzeng/BoneMarrowMap).
 - [Snakemake documentation](https://snakemake.readthedocs.io/).
-- [GSE145410 at GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE145410).
 
 See [CITATION.cff](CITATION.cff) for the workflow citation and [LICENSE](LICENSE) for the code license. Reference assets and input datasets retain their own terms.

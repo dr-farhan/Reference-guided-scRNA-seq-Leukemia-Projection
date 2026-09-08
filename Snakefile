@@ -29,7 +29,7 @@ config["input_paths"] = INPUTS
 
 rule all:
     input:
-        f"{OUT}/validation/output_checks.json",
+        lambda wildcards: rules.figures_and_tables.output,
 
 rule resolve_config:
     output:
@@ -146,14 +146,3 @@ rule figures_and_tables:
         "RCPP_PARALLEL_NUM_THREADS={threads} {RSCRIPT:q} --vanilla "
         "{SCRIPTS}/run_stage.R report {input.config:q} {input.state:q} {output.manifest:q} {SCRIPTS:q} "
         "> {log:q} 2>&1"
-
-rule validate_outputs:
-    input:
-        results=rules.figures_and_tables.output,
-        script="workflow/scripts/validate_outputs.py",
-    output:
-        f"{OUT}/validation/output_checks.json",
-    log:
-        f"{OUT}/logs/05_validate_outputs.log",
-    shell:
-        "python {input.script:q} {OUT:q} {output:q} > {log:q} 2>&1"

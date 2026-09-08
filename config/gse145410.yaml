@@ -1,5 +1,0 @@
-# Run from the repository root alongside the original dataset folder.
-input_paths:
-  - ../single_cell_dataset_GSE145410/Reference_based_mapping_analysis/GSE145410.solote.RNA_combined_model.combined.raw.seurat.rds
-output_dir: results/GSE145410
-reference_cache_dir: ../single_cell_dataset_GSE145410/Revised_V2/reference_cache

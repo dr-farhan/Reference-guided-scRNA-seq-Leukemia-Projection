@@ -1,6 +1,6 @@
 # V2 analysis and figure crosswalk
 
-The supplied GSE145410 and GSE223844 V2 R scripts differ only in candidate-state thresholds and the eligible primitive-label regex. Those differences are outside this workflow. Both retained analysis paths therefore use the same defaults.
+This workflow retains the reference-mapping and lineage sections of the supplied V2 analysis. Candidate-state scoring, classification, and related comparisons are excluded.
 
 | Original section | New section | Treatment |
 | --- | --- | --- |
@@ -36,11 +36,9 @@ The supplied GSE145410 and GSE223844 V2 R scripts differ only in candidate-state
 
 The remaining marker panel includes stem/progenitor markers as part of hematopoietic lineage validation. Their presence does not create a candidate-state classification. Reference labels such as HSC/MPP are likewise retained as normal hematopoietic annotations.
 
-## Numerical and rendering parity
+## Lineage-only figures
 
-The retained mapping and native analysis operations are preserved. Removing scoring eliminates random-number draws and metadata fields, so equivalence must be measured rather than assumed. `tests/compare_v2.R` compares all retained per-cell columns, including both embeddings, with numeric tolerance `1e-8`, and reconstructs lineage-only composition from the original results. It also checks native cluster counts and mapping-QC summaries.
-
-Lineage-only panels intentionally change group labels, color palettes, group-level expression summaries and composition fractions relative to plots containing candidate-state overrides. PDF creation metadata and repelled label positions can differ between runs. Byte identity of every original figure is therefore not the acceptance criterion. The validation report records the observed numerical and image comparisons separately.
+Lineage-only panels use transferred major lineages for group labels, expression summaries, and composition fractions. Candidate-state overrides and score panels are excluded. Reference labels such as HSC/MPP remain normal hematopoietic annotations.
 
 ## Operational differences
 
