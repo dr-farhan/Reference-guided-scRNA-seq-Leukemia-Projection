@@ -1,9 +1,5 @@
 # Read resolved configuration and load the same analysis packages as V2.
-required_packages <- c(
-  "Seurat", "SeuratObject", "BoneMarrowMap", "symphony", "dplyr", "tidyr",
-  "tibble", "purrr", "readr", "stringr", "ggplot2", "patchwork", "ggrepel",
-  "RColorBrewer", "scales", "curl", "yaml"
-)
+source(file.path(script_dir, "packages.R"))
 missing_packages <- required_packages[
   !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
 ]

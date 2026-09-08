@@ -1,4 +1,4 @@
-message_time("Writing annotation tables and Seurat object ...")
+message_time("Writing annotation tables ...")
 
 cell_annotations <- query[[]] %>%
   rownames_to_column("cell") %>%
@@ -33,12 +33,6 @@ if (exists("cluster_lineage")) {
     file.path(table_dir, "cluster_by_reference_lineage_proportions.csv")
   )
 }
-
-saveRDS(
-  query,
-  file.path(object_dir, "AML_BoneMarrowMap_annotated.seurat.rds"),
-  compress = FALSE
-)
 
 methods_note <- c(
   "Reference-guided scRNA-seq leukemia projection",

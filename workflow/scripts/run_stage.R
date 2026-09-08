@@ -27,6 +27,8 @@ if (stage == "prepare") {
   run_module("03_annotate_lineages.R")
 } else if (stage == "native") {
   run_module("04_native_embedding.R")
+} else if (stage == "export") {
+  run_module("13_export_object.R")
 } else if (stage == "report") {
   ref <- readRDS(reference_rds)
   ref$save_uwot_path <- uwot_model
@@ -39,11 +41,11 @@ if (stage == "prepare") {
 } else {
   stop("Unknown stage: ", stage)
 }
-if (stage != "report") {
+if (!stage %in% c("report", "export")) {
   state <- list(query = query, input_files = input_files, rng_state = .Random.seed)
   if (exists("cluster_summary")) state$cluster_summary <- cluster_summary
   saveRDS(state, args[4], compress = FALSE)
-} else {
+} else if (stage == "report") {
   figures <- list.files(figure_dir, pattern = "\\.(pdf|png)$", full.names = TRUE)
   manifest <- data.frame(
     file = basename(figures), bytes = file.info(figures)$size,
