@@ -92,6 +92,13 @@ library <- function(package, ...) {
                 for text in (seurat, seurat_object, "Incompatible", "renv.lock", "INSTALL.md"):
                     self.assertIn(text, result.stderr)
 
+    def test_projectdim_incompatible_versions_fail(self):
+        result = self.run_check("5.1.0", "5.4.0")
+        self.assertNotEqual(result.returncode, 0)
+        for text in ("5.1.0", "5.4.0", "GetAssayData(slot=...)", "ProjectDim()",
+                     "renv.lock", "5.5.1"):
+            self.assertIn(text, result.stderr)
+
     def test_other_versions_warn_without_blanket_rejection(self):
         result = self.run_check("5.5.0", "5.4.0")
         self.assertEqual(result.returncode, 0, result.stderr)

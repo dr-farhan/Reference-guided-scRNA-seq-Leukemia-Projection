@@ -26,6 +26,11 @@ tryCatch({
     stop(installed, "Incompatible Seurat/SeuratObject major versions; ",
          "this can fail in BoneMarrowMap::map_Query(). ", recommended)
   }
+  if (seurat < "5.3.1" && object > "5.2.0") {
+    stop(installed, "Incompatible Seurat/SeuratObject versions: Seurat < 5.3.1 with ",
+         "SeuratObject > 5.2.0 can trigger the defunct GetAssayData(slot=...) ",
+         "error in ProjectDim(). ", recommended)
+  }
   if (seurat != args[2] || object != args[3]) {
     warning(installed, recommended, call. = FALSE, immediate. = TRUE)
   }
