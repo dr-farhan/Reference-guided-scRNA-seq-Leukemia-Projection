@@ -98,12 +98,14 @@ Rscript --vanilla -e 'for (f in list.files("workflow/scripts", pattern="[.]R$", 
 
 GitHub Actions checks the configuration, workflow structure, and R syntax. Snakemake tracks the figure directory as a single output, and `provenance/figure_manifest.csv` records the generated figure checksums.
 
-## Contributors
+## AI-assistance
 
-- **Farhan Ahmad ([dr-farhan](https://github.com/dr-farhan))** — project maintainer and original analysis.
-- **Codex (OpenAI)** — AI coding assistant contributing workflow refactoring, documentation, and repository maintenance.
+Parts of this workflow were developed, reviewed, and debugged with assistance from:
 
-See [CONTRIBUTORS.md](CONTRIBUTORS.md) for contribution credits.
+OpenAI Codex — workflow development, code review, debugging, and reproducibility checks.
+
+All generated or suggested code was reviewed and validated by the repository maintainer before inclusion.
+
 
 ## References
 
