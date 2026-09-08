@@ -8,6 +8,40 @@ import subprocess
 import sys
 
 
+PACKAGE_CHECK_R = '''
+args <- commandArgs(trailingOnly = TRUE)
+source(args[1])
+# Explicit preflight checks for dependencies used by BoneMarrowMap.
+required_packages <- unique(c(required_packages, "AUCell", "BiocNeighbors"))
+failed <- character()
+recommended <- paste0("Tested/recommended renv.lock environment: Seurat ", args[2],
+                      " with SeuratObject ", args[3],
+                      ". Restore renv.lock in a dedicated R environment (see INSTALL.md).")
+tryCatch({
+  seurat <- packageVersion("Seurat")
+  object <- packageVersion("SeuratObject")
+  installed <- paste0("Installed Seurat ", seurat, " with SeuratObject ", object, ". ")
+  if ((seurat < "5.0.0" && object >= "5.0.0") ||
+      (seurat >= "5.0.0" && object < "5.0.0")) {
+    stop(installed, "Incompatible Seurat/SeuratObject major versions; ",
+         "this can fail in BoneMarrowMap::map_Query(). ", recommended)
+  }
+  if (seurat != args[2] || object != args[3]) {
+    warning(installed, recommended, call. = FALSE, immediate. = TRUE)
+  }
+}, error = function(e) {
+  failed <<- c(failed, paste0("Seurat compatibility check: ", conditionMessage(e)))
+})
+for (package in required_packages) {
+  tryCatch(suppressPackageStartupMessages(library(package, character.only = TRUE)),
+    error = function(e) {
+      failed <<- c(failed, paste0(package, ": ", conditionMessage(e)))
+    })
+}
+if (length(failed)) stop("R preflight checks failed:\\n", paste(failed, collapse = "\\n"))
+'''
+
+
 def check(config):
     errors = []
     configured = os.path.expanduser(config["rscript"])
@@ -24,24 +58,24 @@ def check(config):
     if not config["input_paths"]:
         errors.append("No input RDS files configured")
     if rscript:
-        expression = '''
-source(commandArgs(trailingOnly = TRUE)[1])
-failed <- character()
-for (package in required_packages) {
-  tryCatch(suppressPackageStartupMessages(library(package, character.only = TRUE)),
-    error = function(e) {
-      failed <<- c(failed, paste0(package, ": ", conditionMessage(e)))
-    })
-}
-if (length(failed)) stop("Required R packages failed to load:\\n", paste(failed, collapse = "\\n"))
-'''
+        try:
+            script_dir = Path(__file__).resolve().parent
+            lock = json.loads((script_dir.parents[1] / "renv.lock").read_text())
+            recommended = [lock["Packages"][name]["Version"]
+                           for name in ("Seurat", "SeuratObject")]
+        except (OSError, ValueError, KeyError) as error:
+            errors.append(f"Cannot read tested Seurat versions from renv.lock: {error}")
+            return errors
         try:
             result = subprocess.run(
-                [rscript, "--vanilla", "-e", expression,
-                 str(Path(__file__).with_name("packages.R").resolve())],
+                [rscript, "--vanilla", "-e", PACKAGE_CHECK_R,
+                 str(script_dir / "packages.R"), *recommended],
                 capture_output=True, text=True, check=False)
             if result.returncode:
                 errors.append(f"R package check failed using {rscript}:\n{result.stderr}{result.stdout}")
+            elif result.stderr:
+                # Keep recommendations visible even when all package checks pass.
+                print(result.stderr, file=sys.stderr, end="")
         except OSError as error:
             errors.append(f"Cannot execute Rscript {rscript}: {error}")
     return errors

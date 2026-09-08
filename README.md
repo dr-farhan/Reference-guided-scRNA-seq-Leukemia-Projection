@@ -38,6 +38,8 @@ snakemake preflight --cores 1 --configfile config/my_dataset.yaml config/local.y
 
 Preflight checks that the configured `rscript` exists and is executable, all required R packages (including BoneMarrowMap and Symphony) load, and the resolved input RDS and both reference files exist and are readable. It does not read large RDS objects, run analysis, or download references. For a new cache, first run `snakemake download_reference --cores 1 --configfile config/my_dataset.yaml`. Omit `config/local.yaml` if you do not use it. An absolute `rscript` path is recommended on HPC; the default `Rscript` lookup on PATH remains supported. Python helpers use the Python interpreter running Snakemake.
 
+Preflight explicitly checks AUCell and BiocNeighbors and rejects mixed Seurat 4/SeuratObject 5 (or the reverse) environments before mapping. The tested/recommended pair is read from `renv.lock` (currently Seurat 5.5.1 and SeuratObject 5.4.0). Other version differences produce a recommendation to restore that environment; passing these checks does not certify every external package combination. See [INSTALL.md](INSTALL.md) for restoration instructions.
+
 ### Use an existing R environment
 
 Create an untracked `config/local.yaml`:
