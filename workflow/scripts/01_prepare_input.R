@@ -84,4 +84,3 @@ input_qc <- query_input[[]] %>%
     percent.mt, everything()
   )
 readr::write_csv(input_qc, file.path(table_dir, "00_input_metadata.csv.gz"))
-
